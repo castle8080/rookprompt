@@ -1,7 +1,8 @@
 import React from 'react';
-import { SetMainViewAction, ActionDispatcher, MainViewType, BaseComponentProperties } from './AppActions';
+import { AppContextRef, SetMainViewAction, ActionDispatcher } from '../app/AppActions';
+import { AppState, MainViewType } from '../app/AppState';
 
-interface FirstNavigationParameters extends BaseComponentProperties {
+interface FirstNavigationParameters {
     name: string;
 }
 
@@ -10,6 +11,8 @@ interface FirstNavigationState {
 }
 
 export class FirstNavigation extends React.Component<FirstNavigationParameters, FirstNavigationState> {
+
+    static contextType = AppContextRef;
 
     constructor(props: FirstNavigationParameters) {
         super(props);
@@ -23,19 +26,19 @@ export class FirstNavigation extends React.Component<FirstNavigationParameters, 
         console.log(this);
         console.log("on random prompt.");
         this.setState({ name: "George Lucas" })
-        this.props.dispatcher(new SetMainViewAction(MainViewType.RandomPrompt));
+        this.context.dispatcher(new SetMainViewAction(MainViewType.RandomPrompt));
     }
 
     onViewPrompts = (e: React.MouseEvent) => {
         e.preventDefault();
         console.log("Show prompts");
-        this.props.dispatcher(new SetMainViewAction(MainViewType.ShowPrompts));
+        this.context.dispatcher(new SetMainViewAction(MainViewType.ShowPrompts));
     }
 
     onViewWritingEntries = (e: React.MouseEvent) => {
         e.preventDefault();
         console.log("view writing entries.");
-        this.props.dispatcher(new SetMainViewAction(MainViewType.ShowEntries));
+        this.context.dispatcher(new SetMainViewAction(MainViewType.ShowEntries));
     }
 
     render() {
