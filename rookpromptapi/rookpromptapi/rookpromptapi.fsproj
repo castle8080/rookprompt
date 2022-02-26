@@ -8,16 +8,14 @@
   <ItemGroup>
     <Compile Include="Models\Prompt.fs" />
     <Compile Include="Models\User.fs" />
-    <Compile Include="Models\WeatherForecast.fs" />
-    <Compile Include="Controllers\PromptController.fs" />
-    <Compile Include="Controllers/WeatherForecastController.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Services\ServiceCollectionExtensions.fs" />
     <Compile Include="Services\IPromptService.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
-    <Compile Include="Services\Config\CoreServices.fs" />
+    <Compile Include="Controllers\PromptController.fs" />
+    <Compile Include="Config\CoreServices.fs" />
     <Compile Include="Program.fs" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

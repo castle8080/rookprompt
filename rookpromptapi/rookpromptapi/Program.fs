@@ -5,6 +5,7 @@ open System.Collections.Generic
 open System.IO
 open System.Linq
 open System.Threading.Tasks
+
 open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
@@ -13,6 +14,8 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
+
+open rookpromptapi.Config
 
 module Program =
     let exitCode = 0
@@ -23,6 +26,7 @@ module Program =
         let builder = WebApplication.CreateBuilder(args)
 
         builder.Services.AddControllers()
+        builder.Services |> CoreServices.Configure
 
         let app = builder.Build()
 

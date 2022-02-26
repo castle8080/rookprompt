@@ -58,10 +58,15 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
             |> Seq.map fromBson
             |> List.ofSeq
 
+    let insert (p: Prompt) =
+        let doc = toBson p
+        getPrompts().InsertOne(doc)
+        fromBson doc
+
     interface IPromptService with
 
         member this.List(): Prompt list =
-            find(new BsonDocument())
+            find (new BsonDocument())
 
         member this.Save(p: Prompt): Prompt =
             match (this :> IPromptService).FindByPrompt(p.Prompt) with
@@ -70,9 +75,7 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
                     // Could update the timestamp though.
                     p
                 | None ->
-                    let doc = toBson p
-                    getPrompts().InsertOne(doc)
-                    fromBson doc
+                    insert p
 
         member this.DeleteById (id: string): bool =
             getPrompts()

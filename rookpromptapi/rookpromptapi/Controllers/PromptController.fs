@@ -4,36 +4,23 @@ open System
 open System.Collections.Generic
 open System.Linq
 open System.Threading.Tasks
+
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
+
 open rookpromptapi
 open rookpromptapi.Models
+open rookpromptapi.Services
 
 [<ApiController>]
-[<Route("[controller]")>]
-type PromptController (logger : ILogger<PromptController>) =
+type PromptController(
+    logger : ILogger<PromptController>,
+    promptService: IPromptService) =
     inherit ControllerBase()
 
-    let summaries =
-        [|
-            "Freezing"
-            "Bracing"
-            "Chilly"
-            "Cool"
-            "Mild"
-            "Warm"
-            "Balmy"
-            "Hot"
-            "Sweltering"
-            "Scorching"
-        |]
-
     [<HttpGet>]
+    [<Route("prompts")>]
     member this.Get() =
-        let rng = System.Random()
-        [|
-            for index in 0..4 ->
-                { Date = DateTime.Now.AddDays(float index)
-                  TemperatureC = rng.Next(-20,55)
-                  Summary = summaries.[rng.Next(summaries.Length)] }
-        |]
+        let prompts = promptService.List()
+        logger.LogDebug($"Get prompts: {prompts}")
+        prompts
