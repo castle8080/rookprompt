@@ -12,11 +12,14 @@ module MongoX =
     [<Extension>]
     type MongoX =
 
+        /// <summary>
+        /// Extends a document aggregation pipeline to include a sample method.
+        /// </summary>
         [<Extension>]
         static member Sample(this: IAggregateFluent<'a>, size: int) =
             this
                 .AppendStage(new BsonDocumentPipelineStageDefinition<'a, 'a>(
                     bdoc [
-                        ("$sample", bobj [("size", 1)])
+                        ("$sample", bobj [("size", size)])
                     ] 
                 ))
