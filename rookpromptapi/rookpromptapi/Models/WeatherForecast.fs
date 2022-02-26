@@ -1,4 +1,4 @@
-namespace rookpromptapi
+namespace rookpromptapi.Models
 
 open System
 

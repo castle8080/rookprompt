@@ -6,11 +6,12 @@ open System.Linq
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
+open rookpromptapi
 open rookpromptapi.Models
 
 [<ApiController>]
 [<Route("[controller]")>]
-type WeatherForecastController(logger : ILogger<WeatherForecastController>) =
+type PromptController (logger : ILogger<PromptController>) =
     inherit ControllerBase()
 
     let summaries =
@@ -28,7 +29,7 @@ type WeatherForecastController(logger : ILogger<WeatherForecastController>) =
         |]
 
     [<HttpGet>]
-    member _.Get() =
+    member this.Get() =
         let rng = System.Random()
         [|
             for index in 0..4 ->
