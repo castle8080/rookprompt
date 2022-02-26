@@ -1,4 +1,4 @@
-﻿module rookpromptapitest.TestPromptService
+﻿module rookpromptapitest.Integration.TestPromptService
 
 open System
 open Xunit

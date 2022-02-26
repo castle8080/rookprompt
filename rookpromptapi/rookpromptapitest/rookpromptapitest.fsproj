@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <Compile Include="TestServices.fs" />
-    <Compile Include="TestPromptService.fs" />
-    <Compile Include="TestDBCore.fs" />
+    <Compile Include="Integration\TestPromptService.fs" />
+    <Compile Include="Integration\TestDBCore.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -4,7 +4,7 @@ open System
 
 open MongoDB.Bson
 
-module BsonSupport =
+module BsonX =
     let bobj (elements: (string * Object) list) =
         Map<string, Object>(elements)
 

@@ -4,7 +4,7 @@ open System
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 
-open rookpromptapi.Services.Config
+open rookpromptapi.Config
 open Microsoft.Extensions.Configuration
 
 module TestServices =

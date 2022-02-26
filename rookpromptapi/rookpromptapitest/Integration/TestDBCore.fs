@@ -1,4 +1,4 @@
-module rookpromptapitest.TestDBCore
+module rookpromptapitest.Integration.TestDBCore
 
 open System
 open Xunit

@@ -8,7 +8,8 @@ open MongoDB.Driver
 open rookpromptapi.Services
 open rookpromptapi.Models
 
-open rookpromptapi.Services.Mongo.BsonSupport
+open rookpromptapi.Services.Mongo.BsonX
+open rookpromptapi.Services.Mongo.MongoX
 
 type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
 
@@ -24,11 +25,11 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
         doc |> Option.ofObj |> Option.map fromBson
 
     let toBson (p: Prompt): BsonDocument =
-        let doc = new BsonDocument(Map<string, Object> [
+        let doc = bdoc [
             ("prompt", p.Prompt)
             ("created", p.Created)
             ("updated", p.Updated)
-        ])
+        ]
         if p.Id <> "" then
             doc.Add("_id", new ObjectId(p.Id)) |> ignore
         doc
@@ -44,11 +45,6 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
 
     let idEq (id: string) =
         bdoc [("_id", new ObjectId(id))]
-
-    let sample (size: int) =
-        bdoc [
-            ("$sample", bobj [("size", size)])
-        ]
 
     let findOne (filter: BsonDocument) =
         getPrompts()
@@ -98,11 +94,7 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
         member this.SampleOne (): Prompt option =
             getPrompts()
                 .Aggregate()
-                .AppendStage(new BsonDocumentPipelineStageDefinition<BsonDocument, BsonDocument>(
-                    bdoc [
-                        ("$sample", bobj [("size", 1)])
-                    ] 
-                ))
+                .Sample(1)
                 .ToEnumerable()
                 |> Seq.tryHead
                 |> Option.map fromBson

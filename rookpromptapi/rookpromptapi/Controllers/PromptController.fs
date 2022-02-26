@@ -27,3 +27,17 @@ type PromptController(
     [<Route("prompts/random")>]
     member this.GetRandom() =
         promptService.SampleOne()
+
+    [<HttpPost>]
+    [<Route("prompts")>]
+    member this.Post([<FromBodyAttribute>] prompt: Prompt) =
+        let prompt = {
+            prompt with
+                Id = prompt.Id |> Option.ofObj |> Option.defaultValue ""
+                Updated = DateTime.UtcNow
+                Created = DateTime.UtcNow
+        }
+        
+        logger.LogInformation($"Received new prompt: {prompt}")
+        
+        promptService.Save(prompt)
