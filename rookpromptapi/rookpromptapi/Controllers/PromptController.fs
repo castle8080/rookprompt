@@ -20,7 +20,10 @@ type PromptController(
 
     [<HttpGet>]
     [<Route("prompts")>]
-    member this.Get() =
-        let prompts = promptService.List()
-        logger.LogDebug($"Get prompts: {prompts}")
-        prompts
+    member this.List() =
+        promptService.List()
+
+    [<HttpGet>]
+    [<Route("prompts/random")>]
+    member this.GetRandom() =
+        promptService.SampleOne()

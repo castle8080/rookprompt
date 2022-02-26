@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="Services\ServiceCollectionExtensions.fs" />
     <Compile Include="Services\IPromptService.fs" />
+    <Compile Include="Services\Mongo\BsonSupport.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
     <Compile Include="Controllers\PromptController.fs" />
     <Compile Include="Config\CoreServices.fs" />

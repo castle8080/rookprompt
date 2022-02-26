@@ -1,13 +1,14 @@
 ﻿namespace rookpromptapi.Services.Mongo
 
 open System
-open System.Security.Cryptography
 
 open MongoDB.Bson
 open MongoDB.Driver
 
 open rookpromptapi.Services
 open rookpromptapi.Models
+
+open rookpromptapi.Services.Mongo.BsonSupport
 
 type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
 
@@ -39,10 +40,15 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
         getDb().GetCollection<BsonDocument>("prompts")
 
     let promptEq (prompt: string) =
-        new BsonDocument(Map<string, Object>[("prompt", prompt)])
+        bdoc [("prompt", prompt)]
 
     let idEq (id: string) =
-        new BsonDocument(Map<string, Object>[("_id", new ObjectId(id))])
+        bdoc [("_id", new ObjectId(id))]
+
+    let sample (size: int) =
+        bdoc [
+            ("$sample", bobj [("size", size)])
+        ]
 
     let findOne (filter: BsonDocument) =
         getPrompts()
@@ -88,3 +94,15 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
 
         member this.FindByPrompt (prompt: string) =
             findOne (promptEq prompt)
+            
+        member this.SampleOne (): Prompt option =
+            getPrompts()
+                .Aggregate()
+                .AppendStage(new BsonDocumentPipelineStageDefinition<BsonDocument, BsonDocument>(
+                    bdoc [
+                        ("$sample", bobj [("size", 1)])
+                    ] 
+                ))
+                .ToEnumerable()
+                |> Seq.tryHead
+                |> Option.map fromBson

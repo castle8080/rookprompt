@@ -16,3 +16,5 @@ type IPromptService =
     abstract member FindById : string -> Prompt option
     
     abstract member FindByPrompt : string -> Prompt option
+
+    abstract member SampleOne : unit -> Prompt option
