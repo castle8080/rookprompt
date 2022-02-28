@@ -54,8 +54,26 @@ type MongoUserService(mongoClient: MongoClient, databaseName: string) =
         bdoc [("email", email)]
 
     interface IUserService with
-        member this.Update(arg1: User): Async<SysResult<User>> = 
-            raise (System.NotImplementedException())
+        member this.Update(user: User): User Async =
+            async {
+                let! foundUser = (this :> IUserService).FindByEmail(user.Email)
+                match foundUser with
+                    | None ->
+                        return raise (UserNotFound $"User not found: {user.Email}")
+                    | Some(foundUser) ->
+                        let newUser = {
+                            user with
+                                Id = foundUser.Id
+                                Created = foundUser.Created
+                                Updated = DateTime.UtcNow
+                        }
+                        let! r = getUsers() |> MongoX.replaceAsync (toBson newUser)
+                        match r with
+                            | false ->
+                                return raise (DatabaseOperationFailure $"Failed to update user: {newUser.Id}")
+                            | true ->
+                                return newUser
+            }
 
         member this.FindByEmail(email: string): User option Async =
             getUsers() |> MongoX.findOneAsync (emailEq email) fromBson
@@ -63,12 +81,17 @@ type MongoUserService(mongoClient: MongoClient, databaseName: string) =
         member this.FindById(id: string): User option Async =
             getUsers() |> MongoX.findByIdAsync (new ObjectId(id)) fromBson
 
-        member this.Create(user: User): User SysResult Async =
+        member this.Create(user: User): User Async =
             async {
                 match! (this :> IUserService).FindByEmail(user.Email) with
-                    | Some(fUser) ->
-                        return SysResult.FromErrorCode ErrorCode.EmailAlreadyExists
+                    | Some(foundUser) ->
+                        return raise (UserExists $"A user with email {user.Email} already exists.")
                     | None ->
-                        let! r = getUsers() |> MongoX.insertAsync (toBson user) fromBson
-                        return SysResult.Ok r   
+                        let user = {
+                            user with
+                                Id = ""
+                                Created = DateTime.UtcNow
+                                Updated = DateTime.UtcNow
+                        }
+                        return! getUsers() |> MongoX.insertAsync (toBson user) fromBson  
             }

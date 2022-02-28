@@ -54,3 +54,10 @@ module MongoX =
             let! r = c.FindOneAndDeleteAsync(bdoc[("_id", id :> Object)]) |> Async.AwaitTask
             return r |> Option.ofObj |> Option.isSome
         }
+
+    let replaceAsync (doc: BsonDocument) (c: IMongoCollection<BsonDocument>) =
+        let filter = bdoc[("_id", doc["_id"])]
+        async {
+            let! r = c.ReplaceOneAsync(filter, doc) |> Async.AwaitTask
+            return r.IsAcknowledged
+        }

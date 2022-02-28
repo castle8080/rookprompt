@@ -48,25 +48,37 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
     let insertAsync (p: Prompt) =
         getPrompts() |> MongoX.insertAsync (toBson p) fromBson
 
-    let findOneAsync (filter: BsonDocument) =
-        getPrompts() |> MongoX.findOneAsync filter fromBson
-
-    let findAsync (filter: BsonDocument) =
-        getPrompts() |> MongoX.findAsync filter fromBson
+    let updateAsync (p: Prompt) =
+        getPrompts() |> MongoX.replaceAsync (toBson p)
 
     interface IPromptService with
 
         member this.List(): Prompt list Async =
-            findAsync bdoc[]
+            getPrompts() |> MongoX.findAsync (bdoc[]) fromBson 
 
         member this.Save(p: Prompt): Prompt Async =
             async {
                 match! (this :> IPromptService).FindByPrompt(p.Prompt) with
-                    | Some(p) ->
-                        // There is nothing to update yet.
-                        // Could update the timestamp though.
-                        return p
+                    | Some(existingP) ->
+                        let newP = {
+                            p with
+                                Id = existingP.Id
+                                Created = existingP.Created
+                                Updated = DateTime.UtcNow
+                        }
+                        let! updated = updateAsync newP
+                        match updated with
+                            | false ->
+                                return raise (DatabaseOperationFailure $"Failed to update prompt: {newP.Id}")
+                            | true ->
+                                return newP
                     | None ->
+                        let p = {
+                            p with
+                                Id = ""
+                                Created = DateTime.UtcNow
+                                Updated = DateTime.UtcNow
+                        }
                         return! insertAsync p
             }
 
@@ -77,7 +89,7 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
             getPrompts() |> MongoX.findByIdAsync (new ObjectId(id)) fromBson
 
         member this.FindByPrompt (prompt: string) =
-            findOneAsync (promptEq prompt)
+            getPrompts() |> MongoX.findOneAsync (promptEq prompt) fromBson
             
         member this.SampleOne (): Prompt option Async =
             async {
