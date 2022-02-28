@@ -21,6 +21,7 @@
     <Compile Include="Services\Mongo\MongoX.fs" />
     <Compile Include="Services\Mongo\MongoUserService.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
+    <Compile Include="Controllers\UserController.fs" />
     <Compile Include="Controllers\PromptController.fs" />
     <Compile Include="Config\CoreServices.fs" />
     <Compile Include="Program.fs" />

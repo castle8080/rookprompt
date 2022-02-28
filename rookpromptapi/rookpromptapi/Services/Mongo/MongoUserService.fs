@@ -54,6 +54,9 @@ type MongoUserService(mongoClient: MongoClient, databaseName: string) =
         bdoc [("email", email)]
 
     interface IUserService with
+        member this.List(): User list Async =
+            getUsers() |> MongoX.findAsync (bdoc[]) fromBson 
+
         member this.Update(user: User): User Async =
             async {
                 let! foundUser = (this :> IUserService).FindByEmail(user.Email)

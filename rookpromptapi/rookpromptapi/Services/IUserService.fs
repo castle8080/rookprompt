@@ -15,3 +15,4 @@ type IUserService =
 
     abstract member FindById : string -> User option Async
 
+    abstract member List : unit -> User list Async

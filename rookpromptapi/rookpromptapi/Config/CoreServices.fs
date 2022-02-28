@@ -38,7 +38,15 @@ module CoreServices =
             config["db_database"]
         ) :> IPromptService
 
+    let UserServiceFactory (sp: IServiceProvider) =
+        let config = sp.GetService<IConfiguration>()
+        new MongoUserService(
+            sp.GetService<MongoClient>(),
+            config["db_database"]
+        ) :> IUserService
+
     let Configure (serviceCollection: IServiceCollection) =
         serviceCollection
             .AddSingleton(MongoDBClientFactory)
             .AddSingleton(PromptServiceFactory)
+            .AddSingleton(UserServiceFactory)
