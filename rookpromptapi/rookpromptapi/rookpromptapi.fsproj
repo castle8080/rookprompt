@@ -6,15 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Models\Errors.fs" />
     <Compile Include="Models\Prompt.fs" />
     <Compile Include="Models\User.fs" />
+    <Compile Include="Models\UserCredential.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Services\ServiceCollectionExtensions.fs" />
+    <Compile Include="Services\IUserCredentialService.fs" />
+    <Compile Include="Services\IUserService.fs" />
     <Compile Include="Services\IPromptService.fs" />
     <Compile Include="Services\Mongo\BsonX.fs" />
     <Compile Include="Services\Mongo\MongoX.fs" />
+    <Compile Include="Services\Mongo\MongoUserService.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
     <Compile Include="Controllers\PromptController.fs" />
     <Compile Include="Config\CoreServices.fs" />

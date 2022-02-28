@@ -9,14 +9,14 @@ open rookpromptapi.Models
 /// Service for getting, searching, and creating prompts.
 /// </summary>
 type IPromptService =
-    abstract member Save : Prompt -> Prompt Task
+    abstract member Save : Prompt -> Prompt Async
 
-    abstract member List : unit -> Prompt list Task
+    abstract member List : unit -> Prompt list Async
 
-    abstract member DeleteById : string -> bool Task
+    abstract member DeleteById : string -> bool Async
 
-    abstract member FindById : string -> Prompt option Task
+    abstract member FindById : string -> Prompt option Async
     
-    abstract member FindByPrompt : string -> Prompt option Task
+    abstract member FindByPrompt : string -> Prompt option Async
 
-    abstract member SampleOne : unit -> Prompt option Task
+    abstract member SampleOne : unit -> Prompt option Async

@@ -2,11 +2,10 @@
 
 open System
 
-type User = {
+type UserCredential = {
     Id: string
-    Name: string
-    Email: string
-    Roles: string list
+    UserId: string
+    Secret: string
     Created: DateTime
     Updated: DateTime
 }

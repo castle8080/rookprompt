@@ -10,7 +10,7 @@ open rookpromptapi.Services
 open rookpromptapi.Models
 
 open rookpromptapi.Services.Mongo.BsonX
-open rookpromptapi.Services.Mongo.MongoX
+open rookpromptapi.Services.Mongo
 
 type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
 
@@ -31,8 +31,9 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
             ("created", p.Created)
             ("updated", p.Updated)
         ]
-        if p.Id <> "" then
-            doc.Add("_id", new ObjectId(p.Id)) |> ignore
+        match p.Id with
+            | "" | null -> ()
+            | _ -> doc.Add("_id", new ObjectId(p.Id)) |> ignore
         doc
 
     let getDb () =
@@ -44,37 +45,22 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
     let promptEq (prompt: string) =
         bdoc [("prompt", prompt)]
 
-    let idEq (id: string) =
-        bdoc [("_id", new ObjectId(id))]
+    let insertAsync (p: Prompt) =
+        getPrompts() |> MongoX.insertAsync (toBson p) fromBson
 
     let findOneAsync (filter: BsonDocument) =
-        task {
-            let! cur = getPrompts().FindAsync(filter)
-            let! doc = cur.FirstOrDefaultAsync()
-            return doc |> Option.ofObj |> Option.map fromBson
-        }
+        getPrompts() |> MongoX.findOneAsync filter fromBson
 
     let findAsync (filter: BsonDocument) =
-        task {
-            let! cur = getPrompts().FindAsync(filter)
-            let! docs = cur.ToListAsync()
-            return docs |> Seq.map fromBson |> List.ofSeq
-        }
-
-    let insertAsync (p: Prompt) =
-        task {
-            let doc = toBson p
-            do! getPrompts().InsertOneAsync(doc)
-            return fromBson doc
-        }
+        getPrompts() |> MongoX.findAsync filter fromBson
 
     interface IPromptService with
 
-        member this.List(): Prompt list Task =
-            findAsync (new BsonDocument())
+        member this.List(): Prompt list Async =
+            findAsync bdoc[]
 
-        member this.Save(p: Prompt): Prompt Task =
-            task {
+        member this.Save(p: Prompt): Prompt Async =
+            async {
                 match! (this :> IPromptService).FindByPrompt(p.Prompt) with
                     | Some(p) ->
                         // There is nothing to update yet.
@@ -84,24 +70,22 @@ type MongoPromptService(mongoClient: MongoClient, databaseName: string) =
                         return! insertAsync p
             }
 
-        member this.DeleteById (id: string): bool Task =
-            task {
-                let! r = getPrompts().FindOneAndDeleteAsync(idEq id)
-                return r |> Option.ofObj |> Option.isSome
-            }
+        member this.DeleteById (id: string): bool Async =
+            getPrompts() |> MongoX.deleteByIdAsync (new ObjectId(id))
 
         member this.FindById (id: string) =
-            findOneAsync (idEq id)
+            getPrompts() |> MongoX.findByIdAsync (new ObjectId(id)) fromBson
 
         member this.FindByPrompt (prompt: string) =
             findOneAsync (promptEq prompt)
             
-        member this.SampleOne (): Prompt option Task =
-            task {
+        member this.SampleOne (): Prompt option Async =
+            async {
                 let! results =
                     getPrompts()
                         .Aggregate()
                         .Sample(1)
                         .ToListAsync()
+                        |> Async.AwaitTask
                 return results |> Seq.tryHead |> Option.map fromBson
             }

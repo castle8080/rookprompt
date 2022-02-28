@@ -21,12 +21,12 @@ type PromptController(
     [<HttpGet>]
     [<Route("prompts")>]
     member this.List() =
-        promptService.List()
+        promptService.List() |> Async.StartAsTask
 
     [<HttpGet>]
     [<Route("prompts/random")>]
     member this.GetRandom() =
-        promptService.SampleOne()
+        promptService.SampleOne() |> Async.StartAsTask
 
     [<HttpPost>]
     [<Route("prompts")>]
@@ -40,4 +40,4 @@ type PromptController(
         
         logger.LogInformation($"Received new prompt: {prompt}")
         
-        promptService.Save(prompt)
+        promptService.Save(prompt) |> Async.StartAsTask

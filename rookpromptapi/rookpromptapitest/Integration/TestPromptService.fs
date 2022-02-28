@@ -10,15 +10,15 @@ open rookpromptapi.Models
 
 [<Fact>]
 let TestPromptServiceList () =
-    task {
+    async {
         let promptService = TestServices.GetService<IPromptService>()
         let! prompts = promptService.List()
         Assert.NotNull(prompts)
-    }
+    } |> Async.StartAsTask
 
 [<Fact>]
 let TestPromptServiceSave () =
-    task {
+    async {
         let promptService = TestServices.GetService<IPromptService>()
 
         let p = Prompt.Create("Describe a moment of fear.")
@@ -30,6 +30,9 @@ let TestPromptServiceSave () =
                 promptService.DeleteById(existing.Id) |> ignore
 
         let! p = promptService.Save(p)
-
         Assert.True(p.Id.Length > 0)
-    }
+
+        let! foundP = promptService.FindByPrompt(p.Prompt)
+
+        Assert.Equal(p.Prompt, foundP.Value.Prompt)
+    } |> Async.StartAsTask
