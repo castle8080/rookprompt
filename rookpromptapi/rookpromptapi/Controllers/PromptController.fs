@@ -19,17 +19,17 @@ type PromptController(
     inherit ControllerBase()
 
     [<HttpGet>]
-    [<Route("prompts")>]
+    [<Route("api/prompts")>]
     member this.List() =
         promptService.List() |> Async.StartAsTask
 
     [<HttpGet>]
-    [<Route("prompts/random")>]
+    [<Route("api/prompts/random")>]
     member this.GetRandom() =
         promptService.SampleOne() |> Async.StartAsTask
 
     [<HttpPost>]
-    [<Route("prompts")>]
+    [<Route("api/prompts")>]
     member this.Post([<FromBodyAttribute>] prompt: Prompt) =
         let prompt = {
             prompt with

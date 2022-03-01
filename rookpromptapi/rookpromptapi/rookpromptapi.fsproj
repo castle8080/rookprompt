@@ -23,6 +23,7 @@
     <Compile Include="Services\Mongo\BsonX.fs" />
     <Compile Include="Services\Mongo\MongoX.fs" />
     <Compile Include="Services\Mongo\MongoUserService.fs" />
+    <Compile Include="Services\Mongo\MongoUserCredentialService.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
     <Compile Include="Services\Mongo\MongoSecretService.fs" />
     <Compile Include="Services\Impl\HMACSecretHashService.fs" />

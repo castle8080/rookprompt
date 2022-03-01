@@ -7,6 +7,6 @@ open rookpromptapi.Models
 
 type IUserCredentialService =
     
-    abstract member Save : UserCredential -> UserCredential Task
+    abstract member Save : UserCredential -> UserCredential Async
 
-    abstract member GetByUserId : string -> UserCredential Task
+    abstract member FindByUserId : string -> UserCredential option Async

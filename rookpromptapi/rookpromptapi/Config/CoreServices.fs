@@ -8,6 +8,7 @@ open Microsoft.Extensions.Logging
 open rookpromptapi.Services
 open rookpromptapi.Services.Mongo
 open rookpromptapi.Services.ServiceCollectionExtensions
+open rookpromptapi.Services.Impl
 
 open MongoDB.Bson
 open MongoDB.Driver
@@ -45,8 +46,20 @@ module CoreServices =
             config["db_database"]
         ) :> IUserService
 
+    let UserCredentialServiceFactory (sp: IServiceProvider) =
+        let config = sp.GetService<IConfiguration>()
+        new MongoUserCredentialService(
+            sp.GetService<MongoClient>(),
+            config["db_database"]
+        ) :> IUserCredentialService
+
+    let SecretHashServiceFactory (sp: IServiceProvider) =
+        HMACSecretHashService.CreateWithSHA256()
+
     let Configure (serviceCollection: IServiceCollection) =
         serviceCollection
             .AddSingleton(MongoDBClientFactory)
             .AddSingleton(PromptServiceFactory)
             .AddSingleton(UserServiceFactory)
+            .AddSingleton(UserCredentialServiceFactory)
+            .AddSingleton(SecretHashServiceFactory)

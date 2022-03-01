@@ -42,7 +42,7 @@ module MongoX =
         }
 
     let findByIdAsync (id: 'a) (fromBson: BsonDocument -> 'b) (c: IMongoCollection<BsonDocument>) =
-        findOneAsync (bdoc[("id", id :> Object)]) fromBson c
+        findOneAsync (bdoc[("_id", id :> Object)]) fromBson c
 
     let insertAsync (doc: BsonDocument) (fromBson: BsonDocument -> 'a) (c: IMongoCollection<BsonDocument>) =
         async {
