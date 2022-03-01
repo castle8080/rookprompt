@@ -11,6 +11,7 @@ type ISecretHashService =
 
     abstract member Verify : byte[] -> string -> bool
 
+// Extensions to the interface.
 module SecretHashServiceX =
     type ISecretHashService with
         member this.HashString (secret: string): string =

@@ -5,7 +5,6 @@ open System.Threading.Tasks
 
 open System.Security.Cryptography 
 
-
 open rookpromptapi.Services
 open rookpromptapi.Models
 
@@ -39,16 +38,18 @@ type HMACSecretHashService(saltBytes: int, hmacFactory: byte[] -> HMAC) =
         member this.Verify (secret: byte[]) (hashedSecret: string): bool =
             let (salt, previousHashedValue) = parseHashedValue hashedSecret
             let verifyHashedValue = getHashedRaw salt secret
+            
+            // You should compare all values to help prevent timing attacks.
+            let mismatchCount =
+                Seq.zip verifyHashedValue previousHashedValue
+                    |> Seq.filter (function (a,b) -> a <> b)
+                    |> Seq.length
 
-            // Note: you should compare all values (timing attack)
-            let mutable error = false
-            for i in 0..(verifyHashedValue.Length-1) do
-                if verifyHashedValue[i] <> previousHashedValue[i] then
-                    error <- true
-             
-            not error
+            mismatchCount = 0
 
 module HMACSecretHashService =
+
+    // Create a default implementation of a secret hash service using SHA256 and a 64 bit key size.
     let CreateWithSHA256 () =
         let hmacFunc (key: byte[]) = new HMACSHA256(key) :> HMAC
         new HMACSecretHashService(64, hmacFunc) :> ISecretHashService

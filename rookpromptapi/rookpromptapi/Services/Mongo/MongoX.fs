@@ -24,6 +24,7 @@ type MongoX =
                 ] 
             ))
 
+// Utility functions for common operations on Mongo.
 module MongoX =
 
     let findOneAsync (filter: BsonDocument) (fromBson: BsonDocument -> 'a) (c: IMongoCollection<BsonDocument>) =

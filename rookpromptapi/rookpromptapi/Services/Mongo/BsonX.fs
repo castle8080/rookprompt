@@ -4,6 +4,7 @@ open System
 
 open MongoDB.Bson
 
+// Utilities to help create bson document.
 module BsonX =
     let bobj (elements: (string * Object) list) =
         Map<string, Object>(elements)
