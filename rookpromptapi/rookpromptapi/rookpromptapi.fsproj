@@ -10,17 +10,22 @@
     <Compile Include="Models\Prompt.fs" />
     <Compile Include="Models\User.fs" />
     <Compile Include="Models\UserCredential.fs" />
+    <Compile Include="Models\Secret.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Services\ServiceCollectionExtensions.fs" />
     <Compile Include="Services\IUserCredentialService.fs" />
     <Compile Include="Services\IUserService.fs" />
+    <Compile Include="Services\ISecretService.fs" />
     <Compile Include="Services\IPromptService.fs" />
+    <Compile Include="Services\ISecretHashService.fs" />
     <Compile Include="Services\Mongo\BsonX.fs" />
     <Compile Include="Services\Mongo\MongoX.fs" />
     <Compile Include="Services\Mongo\MongoUserService.fs" />
     <Compile Include="Services\Mongo\MongoPromptService.fs" />
+    <Compile Include="Services\Mongo\MongoSecretService.fs" />
+    <Compile Include="Services\Impl\HMACSecretHashService.fs" />
     <Compile Include="Controllers\UserController.fs" />
     <Compile Include="Controllers\PromptController.fs" />
     <Compile Include="Config\CoreServices.fs" />

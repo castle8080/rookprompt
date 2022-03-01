@@ -51,8 +51,8 @@ type UserController(
                 -> raise (InputValdationError "Email does not match.")
             | _ when userRequest.Password <> userRequest.PasswordVerify
                 -> raise (InputValdationError "Passwords do not match.")
-            | _ ->
-                ()
+            | _
+                -> ()
 
         let user: User = {
             Id = ""
