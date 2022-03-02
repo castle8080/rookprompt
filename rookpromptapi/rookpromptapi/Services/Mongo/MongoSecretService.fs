@@ -48,6 +48,9 @@ type MongoSecretService(mongoClient: MongoClient, databaseName: string) =
         member this.FindById(id: string): Secret option Async =
             getSecrets() |> MongoX.findByIdAsync id fromBson
 
+        member this.Delete (id: string): bool Async =
+            getSecrets() |> MongoX.deleteByIdAsync id
+
         member this.List(): Secret list Async =
             getSecrets() |> MongoX.findAsync (bdoc[]) fromBson 
 

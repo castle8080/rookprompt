@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="TestServices.fs" />
+    <Compile Include="Unit\TestJWTTokenService.fs" />
     <Compile Include="Unit\TestHMACSecretHashService.fs" />
     <Compile Include="Integration\TestPromptService.fs" />
     <Compile Include="Integration\TestDBCore.fs" />

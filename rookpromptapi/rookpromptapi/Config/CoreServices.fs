@@ -56,6 +56,21 @@ module CoreServices =
     let SecretHashServiceFactory (sp: IServiceProvider) =
         HMACSecretHashService.CreateWithSHA256()
 
+    let SecretServiceFactory (sp: IServiceProvider) =
+        let config = sp.GetService<IConfiguration>()
+        new MongoSecretService(
+            sp.GetService<MongoClient>(),
+            config["db_database"]
+        ) :> ISecretService
+
+    let TokenServiceFactory (sp: IServiceProvider) =
+        new JWTTokenService(
+            sp.GetService<ISecretService>(),
+            "userAuthenticationTokenSecret",
+            24.0,
+            24.0 * 365.0
+        ) :> ITokenService
+
     let Configure (serviceCollection: IServiceCollection) =
         serviceCollection
             .AddSingleton(MongoDBClientFactory)
@@ -63,3 +78,5 @@ module CoreServices =
             .AddSingleton(UserServiceFactory)
             .AddSingleton(UserCredentialServiceFactory)
             .AddSingleton(SecretHashServiceFactory)
+            .AddSingleton(SecretServiceFactory)
+            .AddSingleton(TokenServiceFactory)

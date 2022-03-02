@@ -30,7 +30,8 @@ module UserController =
     }
 
     type LoginResponse = {
-        Token: string
+        AccessToken: string
+        User: User
     }
 
 [<ApiController>]
@@ -38,7 +39,8 @@ type UserController(
     logger : ILogger<UserController>,
     userService: IUserService,
     userCredentialService: IUserCredentialService,
-    secretHashService: ISecretHashService) =
+    secretHashService: ISecretHashService,
+    tokenService: ITokenService) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -124,8 +126,10 @@ type UserController(
             if not authenticated then
                 return (raise (LoginError $"Could not login user {loginRequest.Email}"))
 
+            let! accessToken = tokenService.Create user
+
             return {
-                // Todo: create a real token.
-                Token = "you logged in"
+                AccessToken = accessToken
+                User = user
             }
         }
