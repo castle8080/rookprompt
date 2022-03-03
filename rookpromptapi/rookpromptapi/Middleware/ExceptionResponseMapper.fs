@@ -12,7 +12,8 @@ open FSharp.Json
 module ExceptionResponseMapper =
     type ExceptionResponse = {
         ErrorType: string
-        Details: string
+        Message: string
+        StackTrace: string
     }
 
     let GetStatusCode (e: exn): int =
@@ -22,7 +23,8 @@ module ExceptionResponseMapper =
     let GetResponseBody (e: exn): string =
         let response = {
             ErrorType = e.GetType().Name
-            Details = e.StackTrace
+            Message = e.Message
+            StackTrace = e.StackTrace
         }
         Json.serialize response
 
